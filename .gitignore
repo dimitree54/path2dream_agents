@@ -1,0 +1,8 @@
+# Environment files
+.env
+.venv/
+
+# UV lock file
+uv.lock
+
+.claude
