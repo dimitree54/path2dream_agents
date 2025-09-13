@@ -1,8 +1,26 @@
+import argparse
 import logging
 from logging import Logger
 from agents.coding_agent import FallbackOnLimitAgent, LoggingAgent, WaitingOnLimitAgent
 from agents.providers.glm import GLMAgent
 from agents.providers.sonnet import ClaudeAgent
+
+
+def parse_init_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--instructions_path",
+        required=True,
+        help="Path to system instructions file"
+    )
+    parser.add_argument(
+        "--files",
+        required=False,
+        help="Extra file pathes for agent to read before starting work",
+        nargs="+",
+        default=[],
+    )
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
@@ -21,3 +39,9 @@ if __name__ == "__main__":
         logger.addHandler(file_handler)
     logger.propagate = False
     logging_agent = LoggingAgent(waiting_agent, logger)
+
+    args = parse_init_args()
+    logging_agent.run(
+        prompt=f"You instructions are stored in file @{args.instructions_path}. Read it fully and strictly follow them!\n\n",
+        files_to_include=args.files
+    )

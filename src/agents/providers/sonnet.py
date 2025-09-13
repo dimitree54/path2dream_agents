@@ -1,4 +1,5 @@
 import sys
+import uuid
 from agents.coding_agent import CLIAgent, LimitExceededError, NothingToContinueError
 from agents.send_email import send_email
 from agents.utils import get_file_tags_suffix, parse_common_args, build_prompt
@@ -18,6 +19,7 @@ class ClaudeAgent(CLIAgent):
         super().__init__(files_to_always_include, working_dir)
         self.model = model
         self.resumable = False
+        self._new_session_id: str | None = None
 
     def _build_cmd(self, prompt: str, files_to_include: list[str]) -> list[str]:
         prompt_suffix = get_file_tags_suffix(
@@ -25,12 +27,15 @@ class ClaudeAgent(CLIAgent):
         )
         full_prompt = prompt + prompt_suffix
 
+        self._new_session_id = str(uuid.uuid4())
+
         cmd = [
             "claude",
             "--model",
             self.model,
             "--dangerously-skip-permissions",
             "--print",
+            f"--session_id {self._new_session_id}",
             full_prompt,
         ]
         return cmd
@@ -41,24 +46,33 @@ class ClaudeAgent(CLIAgent):
         if LIMITS_EXCEEDED_ERROR in content:
             raise LimitExceededError
         self.resumable = True
+
+        content += f"\n\nSession id of this conversation: {self._new_session_id}\nUse it to contunie this conversation."
+
         return content
 
-    def _build_resume_cmd(self, prompt: str) -> list[str]:
+    def _build_resume_cmd(self, prompt: str, session_id: str | None = None) -> list[str]:
         cmd = [
             "claude",
             "--model",
             self.model,
             "--dangerously-skip-permissions",
-            "--continue",
-            "--print",
-            prompt,
+            "--print"
         ]
+
+        if session_id:
+            cmd.appned(f"--resume {session_id}")
+        else:
+            cmd.append("--continue")
+        
+        cmd.append(prompt)
+
         return cmd
 
-    def resume(self, prompt: str | None) -> str:
+    def resume(self, prompt: str | None, session_id: str | None = None) -> str:
         if not self.resumable:
             raise NothingToContinueError
-        content = super().resume()
+        content = super().resume(prompt, session_id)
         if LIMITS_EXCEEDED_ERROR in content:
             raise LimitExceededError
         return content

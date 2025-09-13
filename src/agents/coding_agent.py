@@ -23,7 +23,7 @@ class CodingAgent(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def resume(self, prompt: str | None = None) -> str:
+    def resume(self, prompt: str | None = None, session_id: str | None = None) -> str:
         raise NotImplementedError
 
 
@@ -45,10 +45,10 @@ class CLIAgent(CodingAgent):
         return run_cli(cmd, working_dir=self.working_dir)
 
     @abstractmethod
-    def _build_resume_cmd(self, prompt: str) -> list[str]:
+    def _build_resume_cmd(self, prompt: str, session_id: str | None = None) -> list[str]:
         raise NotImplementedError()
 
-    def resume(self, prompt: str | None = None) -> str:
+    def resume(self, prompt: str | None = None, session_id: str | None = None) -> str:
         cmd = self._build_resume_cmd(prompt or "continue")
         return run_cli(cmd)
 
@@ -73,9 +73,9 @@ class WaitingOnLimitAgent(CodingAgent):
             time.sleep(self.wait_seconds)
             return self.base_agent.run(prompt, files_to_include)
 
-    def resume(self, prompt: str) -> str:
+    def resume(self, prompt: str, session_id: str | None = None) -> str:
         try:
-            return self.base_agent.resume(prompt)
+            return self.base_agent.resume(prompt, session_id)
         except LimitExceededError:
             if self.logger:
                 self.logger.info(
@@ -83,7 +83,7 @@ class WaitingOnLimitAgent(CodingAgent):
                     " waiting for {self.wait_seconds / 60 / 60} hours before retrying resume."
                 )
             time.sleep(self.wait_seconds)
-            return self.base_agent.resume(prompt)
+            return self.base_agent.resume(prompt, session_id)
 
     def __str__(self) -> str:
         return f"WaitingOnLimitAgent({str(self.base_agent)})"
@@ -100,11 +100,11 @@ class FallbackOnLimitAgent(CodingAgent):
         except LimitExceededError:
             return self.fallback_agent.run(prompt, files_to_include)
 
-    def resume(self, prompt: str) -> str:
+    def resume(self, prompt: str, session_id: str | None = None) -> str:
         try:
-            return self.base_agent.resume(prompt)
+            return self.base_agent.resume(prompt, session_id)
         except LimitExceededError:
-            return self.fallback_agent.resume(prompt)
+            return self.fallback_agent.resume(prompt, session_id)
 
     def __str__(self) -> str:
         return (
