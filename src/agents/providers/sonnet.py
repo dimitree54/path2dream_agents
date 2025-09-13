@@ -9,7 +9,12 @@ LIMITS_EXCEEDED_ERROR = "5-hour limit reached"
 
 
 class ClaudeAgent(CLIAgent):
-    def __init__(self, model: str = "sonnet", files_to_always_include: list[str] | None = None, working_dir: str = "./"):
+    def __init__(
+        self,
+        model: str = "sonnet",
+        files_to_always_include: list[str] | None = None,
+        working_dir: str = "./",
+    ):
         super().__init__(files_to_always_include, working_dir)
         self.model = model
         self.resumable = False
