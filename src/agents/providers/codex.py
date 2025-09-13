@@ -1,7 +1,7 @@
 import re
 import sys
 
-from agents.coding_agent import AuthRequiredError, CodingAgent, LimitExceededError
+from agents.coding_agent import AuthRequiredError, CLIAgent, LimitExceededError
 from agents.utils import build_prompt, get_files_suffix, parse_common_args
 from agents.send_email import send_email
 
@@ -33,7 +33,7 @@ def extract_content_between_last_two_timestamps(content: str, timestamp_regex: r
     return result
 
 
-class CodexAgent(CodingAgent):
+class CodexAgent(CLIAgent):
     def _build_cmd(self, prompt: str, files_to_include: list[str]) -> list[str]:
         cmd = [
             "codex",

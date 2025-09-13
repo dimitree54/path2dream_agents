@@ -1,5 +1,5 @@
 import sys
-from agents.coding_agent import CodingAgent, LimitExceededError, NothingToContinueError
+from agents.coding_agent import CLIAgent, LimitExceededError, NothingToContinueError
 from agents.send_email import send_email
 from agents.utils import get_file_tags_suffix, parse_common_args, build_prompt
 
@@ -8,7 +8,7 @@ from agents.utils import get_file_tags_suffix, parse_common_args, build_prompt
 LIMITS_EXCEEDED_ERROR = "5-hour limit reached"
 
 
-class ClaudeAgent(CodingAgent):
+class ClaudeAgent(CLIAgent):
     def __init__(self, model: str = "sonnet", files_to_always_include: list[str] | None = None, working_dir: str = "./"):
         super().__init__(files_to_always_include, working_dir)
         self.model = model

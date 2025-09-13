@@ -1,6 +1,6 @@
 import sys
 
-from agents.coding_agent import AuthRequiredError, CodingAgent
+from agents.coding_agent import AuthRequiredError, CLIAgent
 from agents.utils import build_prompt, get_file_tags_suffix, parse_common_args
 from agents.send_email import send_email
 
@@ -11,7 +11,7 @@ from agents.send_email import send_email
 AUTH_ERROR_SNIPPET = "Please set an Auth method"
 
 
-class QwenAgent(CodingAgent):
+class QwenAgent(CLIAgent):
     def _build_cmd(self, prompt: str, files_to_include: list[str]) -> list[str]:
         prompt_suffix = get_file_tags_suffix(
             self.files_to_always_include + (files_to_include or []), self.working_dir
