@@ -55,7 +55,7 @@ class CLIAgent(CodingAgent):
 
 class WaitingOnLimitAgent(CodingAgent):
     def __init__(self, base_agent: CodingAgent, wait_hours: int = 4, logger: Logger | None = None):
-        self.base_agent = base_agent,
+        self.base_agent = base_agent
         self.wait_seconds = wait_hours * 60 * 60
         self.logger = logger
     
@@ -108,7 +108,7 @@ class FallbackOnLimitAgent(CodingAgent):
         return f"FallbackOnLimitAgent({str(self.base_agent)}, {str(self.fallback_agent)})"
 
 
-class LoggingToLoggerAgent(CodingAgent):
+class LoggingAgent(CodingAgent):
     def __init__(self, base_agent: CodingAgent, logger: Logger) -> None:
         self.base_agent = base_agent
         self.logger = logger
