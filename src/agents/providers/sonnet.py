@@ -19,7 +19,7 @@ class ClaudeAgent(CLIAgent):
             self.files_to_always_include + (files_to_include or []), self.working_dir
         )
         full_prompt = prompt + prompt_suffix
-        
+
         cmd = [
             "claude",
             "--model",
@@ -29,7 +29,7 @@ class ClaudeAgent(CLIAgent):
             full_prompt,
         ]
         return cmd
-    
+
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:
         self.resumable = False
         content = super().run(prompt, files_to_include)
@@ -37,7 +37,7 @@ class ClaudeAgent(CLIAgent):
             raise LimitExceededError
         self.resumable = True
         return content
-    
+
     def _build_resume_cmd(self, prompt: str) -> list[str]:
         cmd = [
             "claude",
@@ -49,7 +49,7 @@ class ClaudeAgent(CLIAgent):
             prompt,
         ]
         return cmd
-    
+
     def resume(self, prompt: str | None) -> str:
         if not self.resumable:
             raise NothingToContinueError
