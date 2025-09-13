@@ -9,7 +9,9 @@ from agents.providers.sonnet import ClaudeAgent
 def parse_init_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--session_id", required=True, help="Session ID (valid UUID), to get it run init of the agent first."
+        "--session_id",
+        required=True,
+        help="Session ID (valid UUID), to get it run init of the agent first.",
     )
     parser.add_argument(
         "--message", required=True, help="Message to send to the agent."
@@ -35,7 +37,4 @@ if __name__ == "__main__":
     logging_agent = LoggingAgent(waiting_agent, logger)
 
     args = parse_init_args()
-    logging_agent.resume(
-        prompt=args.message,
-        session_id=args.session_id
-    )
+    logging_agent.resume(prompt=args.message, session_id=args.session_id)

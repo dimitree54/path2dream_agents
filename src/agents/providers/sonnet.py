@@ -51,20 +51,22 @@ class ClaudeAgent(CLIAgent):
 
         return content
 
-    def _build_resume_cmd(self, prompt: str, session_id: str | None = None) -> list[str]:
+    def _build_resume_cmd(
+        self, prompt: str, session_id: str | None = None
+    ) -> list[str]:
         cmd = [
             "claude",
             "--model",
             self.model,
             "--dangerously-skip-permissions",
-            "--print"
+            "--print",
         ]
 
         if session_id:
             cmd.appned(f"--resume {session_id}")
         else:
             cmd.append("--continue")
-        
+
         cmd.append(prompt)
 
         return cmd

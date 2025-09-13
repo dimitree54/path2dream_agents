@@ -9,9 +9,7 @@ from agents.providers.sonnet import ClaudeAgent
 def parse_init_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--instructions_path",
-        required=True,
-        help="Path to system instructions file"
+        "--instructions_path", required=True, help="Path to system instructions file"
     )
     parser.add_argument(
         "--files",
@@ -43,5 +41,5 @@ if __name__ == "__main__":
     args = parse_init_args()
     logging_agent.run(
         prompt=f"You instructions are stored in file @{args.instructions_path}. Read it fully and strictly follow them!\n\n",
-        files_to_include=args.files
+        files_to_include=args.files,
     )

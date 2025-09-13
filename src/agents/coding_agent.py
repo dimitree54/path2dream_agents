@@ -45,7 +45,9 @@ class CLIAgent(CodingAgent):
         return run_cli(cmd, working_dir=self.working_dir)
 
     @abstractmethod
-    def _build_resume_cmd(self, prompt: str, session_id: str | None = None) -> list[str]:
+    def _build_resume_cmd(
+        self, prompt: str, session_id: str | None = None
+    ) -> list[str]:
         raise NotImplementedError()
 
     def resume(self, prompt: str | None = None, session_id: str | None = None) -> str:
