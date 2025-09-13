@@ -9,6 +9,13 @@ dependencies = [
     "python-dotenv>=1.0.1",
 ]
 
+[project.scripts]
+codex = "agents.providers.codex:main"
+gemini = "agents.providers.gemini:main"
+sonnet = "agents.providers.sonnet:main"
+glm = "agents.providers.glm:main"
+qwen = "agents.providers.qwen:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

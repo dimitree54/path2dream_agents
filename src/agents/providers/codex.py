@@ -61,7 +61,7 @@ class CodexAgent(CLIAgent):
 
 
 
-if __name__ == "__main__":
+def main():
     args = parse_common_args()
     prompt = build_prompt(args.instructions, args.message)
     agent = CodexAgent()
@@ -77,3 +77,7 @@ if __name__ == "__main__":
         sys.exit(1)
     sys.stdout.write(result)
     sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

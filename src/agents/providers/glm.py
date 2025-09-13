@@ -11,7 +11,7 @@ class GLMAgent(ClaudeAgent):
         super().__init__(model, files_to_always_include, working_dir)
         self.glm_cmd = [
             "ANTHROPIC_BASE_URL=https://open.bigmodel.cn/api/anthropic",
-            f"ANTHROPIC_AUTH_TOKEN={os.environ["GLM_AUTH_TOKEN"]}"
+            f"ANTHROPIC_AUTH_TOKEN={os.environ['GLM_AUTH_TOKEN']}"
         ]
 
     def _build_cmd(self, prompt: str, files_to_include: list[str]) -> list[str]:
@@ -23,7 +23,7 @@ class GLMAgent(ClaudeAgent):
         return self.glm_cmd + claude_cmd
 
 
-if __name__ == "__main__":
+def main():
     args = parse_common_args()
     prompt = build_prompt(args.instructions, args.message)
     agent = GLMAgent()
@@ -35,3 +35,7 @@ if __name__ == "__main__":
         sys.exit(1)
     sys.stdout.write(result)
     sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
