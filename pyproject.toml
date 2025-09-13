@@ -22,3 +22,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/agents"]
+
+[dependency-groups]
+dev = [
+    "pytest-xdist>=3.8.0",
+    "ruff>=0.13.0",
+]
