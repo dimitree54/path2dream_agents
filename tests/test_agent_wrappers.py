@@ -14,7 +14,7 @@ class MockSuccessAgent(CodingAgent):
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:
         return self.response
 
-    def resume(self, prompt: str) -> str:
+    def resume(self, prompt: str, session_id: str | None = None) -> str:
         return self.response
 
 
@@ -22,7 +22,7 @@ class MockLimitExceededAgent(CodingAgent):
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:
         raise LimitExceededError("Rate limit exceeded")
 
-    def resume(self, prompt: str) -> str:
+    def resume(self, prompt: str, session_id: str | None = None) -> str:
         raise LimitExceededError("Rate limit exceeded")
 
 
@@ -37,7 +37,7 @@ class MockFlipFlopAgent(CodingAgent):
             raise LimitExceededError("First attempt failed")
         return "success on retry"
 
-    def resume(self, prompt: str) -> str:
+    def resume(self, prompt: str, session_id: str | None = None) -> str:
         self.resume_count += 1
         if self.resume_count == 1:
             raise LimitExceededError("First resume failed")

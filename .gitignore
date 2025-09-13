@@ -9,4 +9,6 @@ uv.lock
 **/__pycache__/
 
 .claude
+.vscode
 
+.DS_Store
