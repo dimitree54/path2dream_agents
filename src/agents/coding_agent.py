@@ -54,11 +54,13 @@ class CLIAgent(CodingAgent):
 
 
 class WaitingOnLimitAgent(CodingAgent):
-    def __init__(self, base_agent: CodingAgent, wait_hours: int = 4, logger: Logger | None = None):
+    def __init__(
+        self, base_agent: CodingAgent, wait_hours: int = 4, logger: Logger | None = None
+    ):
         self.base_agent = base_agent
         self.wait_seconds = wait_hours * 60 * 60
         self.logger = logger
-    
+
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:
         try:
             return self.base_agent.run(prompt, files_to_include)
@@ -70,7 +72,7 @@ class WaitingOnLimitAgent(CodingAgent):
                 )
             time.sleep(self.wait_seconds)
             return self.base_agent.run(prompt, files_to_include)
-    
+
     def resume(self, prompt: str) -> str:
         try:
             return self.base_agent.resume(prompt)
@@ -82,7 +84,7 @@ class WaitingOnLimitAgent(CodingAgent):
                 )
             time.sleep(self.wait_seconds)
             return self.base_agent.resume(prompt)
-    
+
     def __str__(self) -> str:
         return f"WaitingOnLimitAgent({str(self.base_agent)})"
 
@@ -91,21 +93,23 @@ class FallbackOnLimitAgent(CodingAgent):
     def __init__(self, base_agent: CodingAgent, fallback_agent: CodingAgent) -> None:
         self.base_agent = base_agent
         self.fallback_agent = fallback_agent
-    
+
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:
         try:
             return self.base_agent.run(prompt, files_to_include)
         except LimitExceededError:
             return self.fallback_agent.run(prompt, files_to_include)
-    
+
     def resume(self, prompt: str) -> str:
         try:
             return self.base_agent.resume(prompt)
         except LimitExceededError:
             return self.fallback_agent.resume(prompt)
-    
+
     def __str__(self) -> str:
-        return f"FallbackOnLimitAgent({str(self.base_agent)}, {str(self.fallback_agent)})"
+        return (
+            f"FallbackOnLimitAgent({str(self.base_agent)}, {str(self.fallback_agent)})"
+        )
 
 
 class LoggingAgent(CodingAgent):

@@ -21,5 +21,3 @@ if __name__ == "__main__":
         logger.addHandler(file_handler)
     logger.propagate = False
     logging_agent = LoggingAgent(waiting_agent, logger)
-
-    

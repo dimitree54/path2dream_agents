@@ -18,12 +18,7 @@ class QwenAgent(CLIAgent):
         )
         full_prompt = prompt + prompt_suffix
 
-        cmd = [
-            "qwen",
-            "--prompt",
-            full_prompt,
-            "--yolo"
-        ]
+        cmd = ["qwen", "--prompt", full_prompt, "--yolo"]
         return cmd
 
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:

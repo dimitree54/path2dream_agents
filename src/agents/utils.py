@@ -11,7 +11,9 @@ import tempfile
 # todo I am still not sure that termination works properly
 
 
-def _terminate_process_tree(proc: subprocess.Popen, signum: int = signal.SIGTERM) -> None:
+def _terminate_process_tree(
+    proc: subprocess.Popen, signum: int = signal.SIGTERM
+) -> None:
     if proc.poll() is not None:
         return
     try:
@@ -82,7 +84,10 @@ def _run_with_signal_handling(proc: subprocess.Popen) -> int:
 
 
 def run_cli_and_capture_output(
-    cmd: list[str], output_path: str, extra_env_vars: dict[str, str] = None, working_dir: str | None = None
+    cmd: list[str],
+    output_path: str,
+    extra_env_vars: dict[str, str] = None,
+    working_dir: str | None = None,
 ) -> int:
     """Run a CLI command, capturing output, and cleanly tear down on signals.
 
@@ -104,7 +109,7 @@ def run_cli_and_capture_output(
             stderr=subprocess.STDOUT,
             start_new_session=True,
             env=extended_env,
-            cwd=working_dir
+            cwd=working_dir,
         )
         return _run_with_signal_handling(proc)
 
@@ -152,7 +157,9 @@ def gather_files(all_files_to_include: list[str], working_dir: str) -> list[str]
                         matched_files.append(os.path.join(dirpath, fn))
                         found_any = True
             if not found_any:
-                raise FileNotFoundError(f"Requested directory regex matched nothing: {pattern}")
+                raise FileNotFoundError(
+                    f"Requested directory regex matched nothing: {pattern}"
+                )
             continue
 
         # Resolve non-absolute patterns relative to working_dir
@@ -227,9 +234,7 @@ def get_file_tags_suffix(all_files_to_include: list[str], working_dir: str) -> s
 
     parts: list[str] = ["\nContext files:"]
     for file_path in files:
-        parts.append(
-            f"@{file_path}"
-        )
+        parts.append(f"@{file_path}")
 
     return "\n".join(parts)
 
@@ -241,9 +246,21 @@ def parse_common_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--instructions", required=False, help="Path to system instructions file", default=None)
-    parser.add_argument("--files", required=False, help="Extra file pathes for agent to read before starting work", nargs='+', default=[])
-    parser.add_argument("--message", required=True, help="Message to send after instructions")
+        "--instructions",
+        required=False,
+        help="Path to system instructions file",
+        default=None,
+    )
+    parser.add_argument(
+        "--files",
+        required=False,
+        help="Extra file pathes for agent to read before starting work",
+        nargs="+",
+        default=[],
+    )
+    parser.add_argument(
+        "--message", required=True, help="Message to send after instructions"
+    )
     return parser.parse_args()
 
 

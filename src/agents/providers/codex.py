@@ -5,12 +5,18 @@ from agents.coding_agent import AuthRequiredError, CLIAgent, LimitExceededError
 from agents.utils import build_prompt, get_files_suffix, parse_common_args
 from agents.send_email import send_email
 
-TIMESTAMP_REGEX = re.compile(r"\[[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\]")
+TIMESTAMP_REGEX = re.compile(
+    r"\[[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\]"
+)
 AUTH_ERROR_SNIPPET = "stream error: unexpected status 401 Unauthorized"
-LIMITS_EXCEEDED_ERROR = "You exceeded your current quota, please check your plan and billing details"
+LIMITS_EXCEEDED_ERROR = (
+    "You exceeded your current quota, please check your plan and billing details"
+)
 
 
-def extract_content_between_last_two_timestamps(content: str, timestamp_regex: re.Pattern[str]) -> str:
+def extract_content_between_last_two_timestamps(
+    content: str, timestamp_regex: re.Pattern[str]
+) -> str:
     lines = content.splitlines()
 
     match_line_numbers = []  # 1-based line numbers
@@ -20,11 +26,11 @@ def extract_content_between_last_two_timestamps(content: str, timestamp_regex: r
 
     if len(match_line_numbers) < 2:
         return content
-    
+
     prelast_ln = match_line_numbers[-2]
     last_ln = match_line_numbers[-1]
 
-    start_idx = prelast_ln 
+    start_idx = prelast_ln
     end_idx = last_ln - 1
 
     result = ""
@@ -40,7 +46,7 @@ class CodexAgent(CLIAgent):
             "exec",
             "--cd",
             self.working_dir,
-            "--dangerously-bypass-approvals-and-sandbox"
+            "--dangerously-bypass-approvals-and-sandbox",
         ]
 
         prompt_suffix = get_files_suffix(
@@ -58,7 +64,6 @@ class CodexAgent(CLIAgent):
         if LIMITS_EXCEEDED_ERROR in content:
             raise LimitExceededError
         return extract_content_between_last_two_timestamps(content, TIMESTAMP_REGEX)
-
 
 
 def main():

@@ -1,5 +1,10 @@
 import time
-from agents.coding_agent import CodingAgent, LimitExceededError, WaitingOnLimitAgent, FallbackOnLimitAgent
+from agents.coding_agent import (
+    CodingAgent,
+    LimitExceededError,
+    WaitingOnLimitAgent,
+    FallbackOnLimitAgent,
+)
 
 
 class MockSuccessAgent(CodingAgent):
@@ -40,7 +45,6 @@ class MockFlipFlopAgent(CodingAgent):
 
 
 class TestWaitingOnLimitAgent:
-
     def test_successful_run_no_wait(self):
         """Test that successful runs don't trigger waiting"""
         base_agent = MockSuccessAgent("test response")
@@ -65,7 +69,7 @@ class TestWaitingOnLimitAgent:
         def mock_sleep(seconds):
             sleep_calls.append(seconds)
 
-        monkeypatch.setattr(time, 'sleep', mock_sleep)
+        monkeypatch.setattr(time, "sleep", mock_sleep)
 
         base_agent = MockFlipFlopAgent()
         waiting_agent = WaitingOnLimitAgent(base_agent, wait_hours=2)
@@ -84,7 +88,7 @@ class TestWaitingOnLimitAgent:
         def mock_sleep(seconds):
             sleep_calls.append(seconds)
 
-        monkeypatch.setattr(time, 'sleep', mock_sleep)
+        monkeypatch.setattr(time, "sleep", mock_sleep)
 
         base_agent = MockFlipFlopAgent()
         waiting_agent = WaitingOnLimitAgent(base_agent, wait_hours=1)
@@ -97,7 +101,6 @@ class TestWaitingOnLimitAgent:
 
 
 class TestFallbackOnLimitAgent:
-
     def test_successful_run_uses_base_agent(self):
         """Test that successful runs use base agent"""
         base_agent = MockSuccessAgent("base response")
