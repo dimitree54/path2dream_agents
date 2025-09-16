@@ -42,7 +42,9 @@ def main():
 
     args = parse_init_args()
     result = logging_agent.run(
-        prompt=f"You instructions are stored in file @{args.instructions_path}. Read it fully and strictly follow them!\n\n",
+        prompt=f"""You instructions are stored in file @{args.instructions_path}. 
+        Read it fully and strictly follow them!
+        After reading, please, introduce yourself and tell what can you do?""",
         files_to_include=args.files,
     )
     return result
