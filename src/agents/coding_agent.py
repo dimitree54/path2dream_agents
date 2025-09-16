@@ -88,7 +88,12 @@ class WaitingOnLimitAgent(CodingAgent):
 
 
 class FallbackOnLimitAgent(CodingAgent):
-    def __init__(self, base_agent: CodingAgent, fallback_agent: CodingAgent, logger: Logger | None = None) -> None:
+    def __init__(
+        self,
+        base_agent: CodingAgent,
+        fallback_agent: CodingAgent,
+        logger: Logger | None = None,
+    ) -> None:
         self.base_agent = base_agent
         self.fallback_agent = fallback_agent
         self.logger = logger
@@ -132,13 +137,15 @@ class LoggingAgent(CodingAgent):
         result = self.base_agent.run(prompt, files_to_include)
         self.logger.info(f"[{run_id}] Run result:\n{result}")
         return result
-    
+
     def resume(self, prompt: str, session_id: str | None = None) -> str:
         run_id = str(time.time_ns())
-        self.logger.info(f"[{run_id}] Resuming {self.base_agent} with prompt:\n{prompt}")
+        self.logger.info(
+            f"[{run_id}] Resuming {self.base_agent} with prompt:\n{prompt}"
+        )
         result = self.base_agent.resume(prompt, session_id)
         self.logger.info(f"[{run_id}] Resume result:\n{result}")
         return result
-    
+
     def __str__(self) -> str:
         return f"LoggingAgent({str(self.base_agent)})"

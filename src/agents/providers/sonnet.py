@@ -1,6 +1,6 @@
 import sys
 import uuid
-from agents.coding_agent import CLIAgent, LimitExceededError, NothingToContinueError
+from agents.coding_agent import CLIAgent, LimitExceededError
 from agents.send_email import send_email
 from agents.utils import get_file_tags_suffix, parse_common_args, build_prompt
 
