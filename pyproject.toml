@@ -15,6 +15,8 @@ gemini = "agents.providers.gemini:main"
 sonnet = "agents.providers.sonnet:main"
 glm = "agents.providers.glm:main"
 qwen = "agents.providers.qwen:main"
+init_multi_turn_agent = "agents.pipelines.init_multi_turn_agent:main"
+call_multi_turn_agent = "agents.pipelines.call_multi_turn_agent:main"
 
 [build-system]
 requires = ["hatchling"]

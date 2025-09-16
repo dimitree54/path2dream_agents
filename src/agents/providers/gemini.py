@@ -15,7 +15,7 @@ class GeminiAgent(CLIAgent):
         )
         full_prompt = prompt + prompt_suffix
 
-        cmd = ["gemini", "-m", "gemini-2.5-pro", "--yolo", "--prompt", full_prompt]
+        cmd = ["gemini", "-m", "gemini-2.5-pro", "--yolo", "--prompt", f'"{full_prompt}"']
         return cmd
 
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:

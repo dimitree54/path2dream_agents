@@ -1,6 +1,7 @@
 import argparse
 import logging
 from logging import Logger
+from dotenv import load_dotenv
 from agents.coding_agent import FallbackOnLimitAgent, LoggingAgent, WaitingOnLimitAgent
 from agents.providers.glm import GLMAgent
 from agents.providers.sonnet import ClaudeAgent
@@ -9,7 +10,7 @@ from agents.providers.sonnet import ClaudeAgent
 def parse_init_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--session_id",
+        "--session-id",
         required=True,
         help="Session ID (valid UUID), to get it run init of the agent first.",
     )
@@ -19,7 +20,8 @@ def parse_init_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+def main():
+    load_dotenv()
     sonnet_agent = ClaudeAgent()
     glm_agent = GLMAgent()
     fallback_agent = FallbackOnLimitAgent(sonnet_agent, glm_agent)
@@ -37,4 +39,9 @@ if __name__ == "__main__":
     logging_agent = LoggingAgent(waiting_agent, logger)
 
     args = parse_init_args()
-    logging_agent.resume(prompt=args.message, session_id=args.session_id)
+    result = logging_agent.resume(prompt=args.message, session_id=args.session_id)
+    return result
+
+
+if __name__ == "__main__":
+    main()

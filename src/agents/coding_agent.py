@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from logging import Logger
 import time
 
@@ -18,11 +18,9 @@ class NothingToContinueError(Exception):
 
 
 class CodingAgent(ABC):
-    @abstractmethod
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:
         raise NotImplementedError
 
-    @abstractmethod
     def resume(self, prompt: str | None = None, session_id: str | None = None) -> str:
         raise NotImplementedError
 
@@ -36,7 +34,6 @@ class CLIAgent(CodingAgent):
         self.files_to_always_include: list[str] = files_to_always_include or list()
         self.working_dir = working_dir
 
-    @abstractmethod
     def _build_cmd(self, prompt: str, files_to_include: list[str]) -> list[str]:
         raise NotImplementedError()
 
@@ -44,7 +41,6 @@ class CLIAgent(CodingAgent):
         cmd = self._build_cmd(prompt, files_to_include)
         return run_cli(cmd, working_dir=self.working_dir)
 
-    @abstractmethod
     def _build_resume_cmd(
         self, prompt: str, session_id: str | None = None
     ) -> list[str]:
@@ -125,3 +121,13 @@ class LoggingAgent(CodingAgent):
         result = self.base_agent.run(prompt, files_to_include)
         self.logger.info(f"[{run_id}] Run result:\n{result}")
         return result
+    
+    def resume(self, prompt: str, session_id: str | None = None) -> str:
+        run_id = str(time.time_ns())
+        self.logger.info(f"[{run_id}] Resuming {self.base_agent} with prompt:\n{prompt}")
+        result = self.base_agent.resume(prompt, session_id)
+        self.logger.info(f"[{run_id}] Resume result:\n{result}")
+        return result
+    
+    def __str__(self) -> str:
+        return f"LoggingAgent({str(self.base_agent)})"

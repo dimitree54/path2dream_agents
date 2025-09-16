@@ -18,7 +18,6 @@ class ClaudeAgent(CLIAgent):
     ):
         super().__init__(files_to_always_include, working_dir)
         self.model = model
-        self.resumable = False
         self._new_session_id: str | None = None
 
     def _build_cmd(self, prompt: str, files_to_include: list[str]) -> list[str]:
@@ -35,17 +34,16 @@ class ClaudeAgent(CLIAgent):
             self.model,
             "--dangerously-skip-permissions",
             "--print",
-            f"--session_id {self._new_session_id}",
-            full_prompt,
+            "--session-id",
+            self._new_session_id,
+            f'"{full_prompt}"',
         ]
         return cmd
 
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:
-        self.resumable = False
         content = super().run(prompt, files_to_include)
         if LIMITS_EXCEEDED_ERROR in content:
             raise LimitExceededError
-        self.resumable = True
 
         content += f"\n\nSession id of this conversation: {self._new_session_id}\nUse it to contunie this conversation."
 
@@ -63,7 +61,7 @@ class ClaudeAgent(CLIAgent):
         ]
 
         if session_id:
-            cmd.appned(f"--resume {session_id}")
+            cmd.append(f"--resume {session_id}")
         else:
             cmd.append("--continue")
 
@@ -72,8 +70,6 @@ class ClaudeAgent(CLIAgent):
         return cmd
 
     def resume(self, prompt: str | None, session_id: str | None = None) -> str:
-        if not self.resumable:
-            raise NothingToContinueError
         content = super().resume(prompt, session_id)
         if LIMITS_EXCEEDED_ERROR in content:
             raise LimitExceededError

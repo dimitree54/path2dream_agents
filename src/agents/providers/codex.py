@@ -54,7 +54,7 @@ class CodexAgent(CLIAgent):
         )
         full_prompt = prompt + prompt_suffix
 
-        cmd.append(full_prompt)
+        cmd.append(f'"{full_prompt}"')
         return cmd
 
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:
