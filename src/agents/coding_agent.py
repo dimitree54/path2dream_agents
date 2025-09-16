@@ -88,20 +88,31 @@ class WaitingOnLimitAgent(CodingAgent):
 
 
 class FallbackOnLimitAgent(CodingAgent):
-    def __init__(self, base_agent: CodingAgent, fallback_agent: CodingAgent) -> None:
+    def __init__(self, base_agent: CodingAgent, fallback_agent: CodingAgent, logger: Logger | None = None) -> None:
         self.base_agent = base_agent
         self.fallback_agent = fallback_agent
+        self.logger = logger
 
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:
         try:
             return self.base_agent.run(prompt, files_to_include)
         except LimitExceededError:
+            if self.logger:
+                self.logger.info(
+                    f"Limit exceeded for {str(self.base_agent)},"
+                    f" falling back to {str(self.fallback_agent)}."
+                )
             return self.fallback_agent.run(prompt, files_to_include)
 
     def resume(self, prompt: str, session_id: str | None = None) -> str:
         try:
             return self.base_agent.resume(prompt, session_id)
         except LimitExceededError:
+            if self.logger:
+                self.logger.info(
+                    f"Limit exceeded for {str(self.base_agent)},"
+                    f" falling back to {str(self.fallback_agent)}."
+                )
             return self.fallback_agent.resume(prompt, session_id)
 
     def __str__(self) -> str:
