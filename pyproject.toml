@@ -1,6 +1,6 @@
 [project]
 name = "path2dream-agents"
-version = "0.1.5"
+version = "0.1.6"
 description = "Path2Dream AI agents"
 requires-python = ">=3.11"
 
