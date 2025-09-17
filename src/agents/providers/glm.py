@@ -6,6 +6,7 @@ from agents.send_email import send_email
 from agents.utils import parse_init_args, parse_resume_args, build_init_prompt
 from dotenv import load_dotenv
 
+
 class GLMAgent(ClaudeAgent):
     def get_extra_env_vars(self) -> dict[str, str] | None:
         return {
