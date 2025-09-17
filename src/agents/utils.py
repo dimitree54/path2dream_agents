@@ -11,78 +11,6 @@ import tempfile
 # todo I am still not sure that termination works properly
 
 
-def _terminate_process_tree(
-    proc: subprocess.Popen, signum: int = signal.SIGTERM
-) -> None:
-    if proc.poll() is not None:
-        return
-    try:
-        # Try sending to the whole process group (best-effort)
-        os.killpg(proc.pid, signum)
-    except Exception:
-        pass
-    try:
-        # Also send directly to the process in case group delivery failed
-        proc.send_signal(signum)
-    except Exception:
-        try:
-            if signum == signal.SIGKILL:
-                proc.kill()
-            else:
-                proc.terminate()
-        except Exception:
-            pass
-
-
-def _run_with_signal_handling(proc: subprocess.Popen) -> int:
-    prev_int = signal.getsignal(signal.SIGINT)
-    prev_term = signal.getsignal(signal.SIGTERM)
-    try:
-        prev_hup = signal.getsignal(signal.SIGHUP)
-    except Exception:
-        prev_hup = None
-
-    def _handle(sig, frame):
-        _terminate_process_tree(proc, signal.SIGTERM)
-        try:
-            proc.wait(timeout=5)
-        except Exception:
-            _terminate_process_tree(proc, signal.SIGKILL)
-        sys.exit(128 + sig)
-
-    try:
-        signal.signal(signal.SIGINT, _handle)
-        signal.signal(signal.SIGTERM, _handle)
-        try:
-            signal.signal(signal.SIGHUP, _handle)
-        except Exception:
-            pass
-
-        returncode = proc.wait()
-        return returncode
-    except KeyboardInterrupt:
-        _terminate_process_tree(proc, signal.SIGTERM)
-        try:
-            proc.wait(timeout=5)
-        except Exception:
-            _terminate_process_tree(proc, signal.SIGKILL)
-        raise
-    finally:
-        try:
-            signal.signal(signal.SIGINT, prev_int)
-        except Exception:
-            pass
-        try:
-            signal.signal(signal.SIGTERM, prev_term)
-        except Exception:
-            pass
-        if prev_hup is not None:
-            try:
-                signal.signal(signal.SIGHUP, prev_hup)
-            except Exception:
-                pass
-
-
 def run_cli_and_capture_output(
     cmd: list[str],
     output_path: str,
@@ -111,10 +39,10 @@ def run_cli_and_capture_output(
             env=extended_env,
             cwd=working_dir,
         )
-        return _run_with_signal_handling(proc)
+        return proc.wait()
 
 
-def run_cli(cmd: list[str], working_dir: str | None = None) -> str:
+def run_cli(cmd: list[str], working_dir: str | None = None, extra_env_vars: dict[str, str] = None) -> str:
     with tempfile.NamedTemporaryFile() as tmp_file:
         run_cli_and_capture_output(cmd, tmp_file.name, working_dir=working_dir)
         content = tmp_file.read().decode("utf-8")

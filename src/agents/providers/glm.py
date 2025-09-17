@@ -7,25 +7,11 @@ from agents.utils import parse_common_args, build_prompt
 
 
 class GLMAgent(ClaudeAgent):
-    def __init__(
-        self,
-        model: str = "sonnet",
-        files_to_always_include: list[str] | None = None,
-        working_dir: str = "./",
-    ):
-        super().__init__(model, files_to_always_include, working_dir)
-        self.glm_cmd = [
-            "ANTHROPIC_BASE_URL=https://open.bigmodel.cn/api/anthropic",
-            f"ANTHROPIC_AUTH_TOKEN={os.environ['GLM_AUTH_TOKEN']}",
-        ]
-
-    def _build_cmd(self, prompt: str, files_to_include: list[str]) -> list[str]:
-        claude_cmd = super()._build_cmd(prompt)
-        return self.glm_cmd + claude_cmd
-
-    def _build_resume_cmd(self, prompt: str) -> list[str]:
-        claude_cmd = super()._build_resume_cmd(prompt)
-        return self.glm_cmd + claude_cmd
+    def get_extra_env_vars(self) -> dict[str, str] | None:
+        return {
+            "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
+            "ANTHROPIC_AUTH_TOKEN": os.environ['GLM_AUTH_TOKEN'],
+        }
 
 
 def main():
