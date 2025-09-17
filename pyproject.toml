@@ -1,6 +1,6 @@
 [project]
 name = "path2dream-agents"
-version = "0.1.6"
+version = "0.1.7"
 description = "Path2Dream AI agents"
 requires-python = ">=3.11"
 
@@ -13,10 +13,11 @@ dependencies = [
 codex = "agents.providers.codex:main"
 gemini = "agents.providers.gemini:main"
 sonnet = "agents.providers.sonnet:main"
-glm = "agents.providers.glm:main"
+init_glm = "agents.providers.glm:init"
+call_glm = "agents.providers.glm:resume"
 qwen = "agents.providers.qwen:main"
-init_multi_turn_agent = "agents.pipelines.init_multi_turn_agent:main"
-call_multi_turn_agent = "agents.pipelines.call_multi_turn_agent:main"
+init_multi_turn_agent = "agents.pipelines.multi_turn_agent:init"
+call_multi_turn_agent = "agents.pipelines.multi_turn_agent:resume"
 
 [build-system]
 requires = ["hatchling"]

@@ -200,3 +200,37 @@ def build_prompt(instructions_path: str | None, message: str) -> str:
         prompt += f"You instructions are stored in file @{instructions_path}. Read it fully and strictly follow them!\n\n"
     prompt += f"New message from user: {message}"
     return prompt
+
+
+def parse_init_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--instructions_path", required=True, help="Path to system instructions file"
+    )
+    parser.add_argument(
+        "--files",
+        required=False,
+        help="Extra file pathes for agent to read before starting work",
+        nargs="+",
+        default=[],
+    )
+    return parser.parse_args()
+
+
+def build_init_prompt(instructions_path: str) -> str:
+    return f"""You instructions are stored in file @{instructions_path}. 
+        Read it fully and strictly follow them!
+        After reading, please, introduce yourself and tell what can you do?"""
+
+
+def parse_resume_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--session-id",
+        required=True,
+        help="Session ID (valid UUID), to get it run init of the agent first.",
+    )
+    parser.add_argument(
+        "--message", required=True, help="Message to send to the agent."
+    )
+    return parser.parse_args()
