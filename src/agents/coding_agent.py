@@ -33,7 +33,7 @@ class CLIAgent(CodingAgent):
     ):
         self.files_to_always_include: list[str] = files_to_always_include or list()
         self.working_dir = working_dir
-    
+
     def get_extra_env_vars(self) -> dict[str, str] | None:
         return None
 
@@ -42,7 +42,9 @@ class CLIAgent(CodingAgent):
 
     def run(self, prompt: str, files_to_include: list[str] | None = None) -> str:
         cmd = self._build_cmd(prompt, files_to_include)
-        return run_cli(cmd, working_dir=self.working_dir, extra_env_vars=self.get_extra_env_vars())
+        return run_cli(
+            cmd, working_dir=self.working_dir, extra_env_vars=self.get_extra_env_vars()
+        )
 
     def _build_resume_cmd(
         self, prompt: str, session_id: str | None = None

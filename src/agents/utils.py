@@ -1,9 +1,7 @@
 import argparse
 import os
 import re
-import signal
 import subprocess
-import sys
 import glob
 import tempfile
 
@@ -42,7 +40,11 @@ def run_cli_and_capture_output(
         return proc.wait()
 
 
-def run_cli(cmd: list[str], working_dir: str | None = None, extra_env_vars: dict[str, str] = None) -> str:
+def run_cli(
+    cmd: list[str],
+    working_dir: str | None = None,
+    extra_env_vars: dict[str, str] = None,
+) -> str:
     with tempfile.NamedTemporaryFile() as tmp_file:
         run_cli_and_capture_output(cmd, tmp_file.name, working_dir=working_dir)
         content = tmp_file.read().decode("utf-8")

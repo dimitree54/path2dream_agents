@@ -10,7 +10,7 @@ class GLMAgent(ClaudeAgent):
     def get_extra_env_vars(self) -> dict[str, str] | None:
         return {
             "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
-            "ANTHROPIC_AUTH_TOKEN": os.environ['GLM_AUTH_TOKEN'],
+            "ANTHROPIC_AUTH_TOKEN": os.environ["GLM_AUTH_TOKEN"],
         }
 
 
