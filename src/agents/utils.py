@@ -1,12 +1,30 @@
 import argparse
+import glob
+import logging
 import os
 import re
 import subprocess
-import glob
 import tempfile
+from logging import Logger
 
 
 # todo I am still not sure that termination works properly
+
+
+def build_logger(file_path: str) -> Logger:
+    """Create a module-level file logger if it does not already exist."""
+    logger = logging.getLogger("agents.full")
+    if logger.handlers:
+        return logger
+
+    logger.setLevel(logging.INFO)
+    file_handler = logging.FileHandler(file_path, encoding="utf-8")
+    file_handler.setLevel(logging.INFO)
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    logger.propagate = False
+    return logger
 
 
 def run_cli_and_capture_output(
@@ -232,5 +250,20 @@ def parse_resume_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--message", required=True, help="Message to send to the agent."
+    )
+    return parser.parse_args()
+
+
+def parse_call_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--message", required=True, help="Message to send to the agent."
+    )
+    parser.add_argument(
+        "--files",
+        required=False,
+        help="Extra file pathes for agent to read before starting work",
+        nargs="+",
+        default=[],
     )
     return parser.parse_args()

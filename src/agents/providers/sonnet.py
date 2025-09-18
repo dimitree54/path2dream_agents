@@ -1,8 +1,9 @@
-import sys
 import uuid
 from agents.coding_agent import CLIAgent, LimitExceededError
-from agents.send_email import send_email
-from agents.utils import get_file_tags_suffix, parse_common_args, build_prompt
+from agents.utils import get_file_tags_suffix, build_logger, parse_call_args, parse_init_args, parse_resume_args, build_init_prompt
+from dotenv import load_dotenv
+from agents.coding_agent import LoggingAgent, WaitingOnLimitAgent
+from agents.coding_agent import CodingAgent
 
 # todo support re-auth
 
@@ -76,19 +77,32 @@ class ClaudeAgent(CLIAgent):
         return content
 
 
-def main():
-    args = parse_common_args()
-    prompt = build_prompt(args.instructions, args.message)
+def build_agent() -> CodingAgent:
+    load_dotenv()
     agent = ClaudeAgent()
-    try:
-        result = agent.run(prompt, files_to_include=args.files)
-    except LimitExceededError:
-        send_email("claude limits exceeded")
-        sys.stdout.write("claude is not available right now")
-        sys.exit(1)
-    sys.stdout.write(result)
-    sys.exit(0)
+    logger = build_logger("./full_agents_log.txt")
+    waiting_on_limit_agent = WaitingOnLimitAgent(agent, wait_hours=1, logger=logger)
+    logging_agent = LoggingAgent(waiting_on_limit_agent, logger)
+    return logging_agent
 
 
-if __name__ == "__main__":
-    main()
+def call() -> str:
+    args = parse_call_args()
+    agent = build_agent()
+    result = agent.run(args.message, files_to_include=args.files)
+    return result
+
+
+def init() -> str:
+    args = parse_init_args()
+    prompt = build_init_prompt(args.instructions_path)
+    agent = build_agent()
+    result = agent.run(prompt, files_to_include=args.files)
+    return result
+
+
+def resume() -> str:
+    args = parse_resume_args()
+    agent = build_agent()
+    result = agent.resume(prompt=args.message, session_id=args.session_id)
+    return result
