@@ -8,9 +8,6 @@ import tempfile
 from logging import Logger
 
 
-# todo I am still not sure that termination works properly
-
-
 def build_logger(file_path: str) -> Logger:
     """Create a module-level file logger if it does not already exist."""
     logger = logging.getLogger("agents.full")
@@ -27,21 +24,13 @@ def build_logger(file_path: str) -> Logger:
     return logger
 
 
+# todo: when the python script is terminated, the subprocess still run, what we can do with it? 
 def run_cli_and_capture_output(
     cmd: list[str],
     output_path: str,
     extra_env_vars: dict[str, str] = None,
     working_dir: str | None = None,
 ) -> int:
-    """Run a CLI command, capturing output, and cleanly tear down on signals.
-
-    - Spawns the child in its own process group so signals reach the whole tree.
-    - On SIGINT/SIGTERM/SIGHUP, sends SIGTERM then escalates to SIGKILL after 5s.
-    - Restores previous signal handlers before returning.
-    - Captures stdout and stderr to the specified output file.
-
-    Returns the child's exit code. May raise KeyboardInterrupt if not handled.
-    """
     extended_env = os.environ.copy()
     if extra_env_vars:
         extended_env.update(extra_env_vars)
@@ -51,7 +40,6 @@ def run_cli_and_capture_output(
             cmd,
             stdout=out,
             stderr=subprocess.STDOUT,
-            start_new_session=True,
             env=extended_env,
             cwd=working_dir,
         )
