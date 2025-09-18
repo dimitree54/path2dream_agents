@@ -24,7 +24,7 @@ def build_logger(file_path: str) -> Logger:
     return logger
 
 
-# todo: when the python script is terminated, the subprocess still run, what we can do with it? 
+# todo: when the python script is terminated, the subprocess still run, what we can do with it?
 def run_cli_and_capture_output(
     cmd: list[str],
     output_path: str,
